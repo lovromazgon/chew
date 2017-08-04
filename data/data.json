@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "data":
+    {
+      "templates":[
+        "package_spec",
+        "package_body"
+      ],
+      "name":"my_package",
+      "schema":"smth",
+      "procedures":[
+        {
+          "name":"my_proc",
+          "spec_template":"procedure_spec",
+          "body_template":"procedure_body",
+          "parameters":[
+            {
+              "type":"IN",
+              "name":"p_my_param",
+              "datatype":"VARCHAR2",
+              "default":"'empty'"
+            }
+          ]
+        },
+        {
+          "name":"my_proc_2",
+          "spec_template":"procedure_spec",
+          "body_template":"procedure_body",
+          "parameters":[
+            {
+              "type":"IN",
+              "name":"p_my_param",
+              "datatype":"VARCHAR2",
+              "default":"'empty'"
+            }
+          ]
+        }
+      ]
+    }
+
+}

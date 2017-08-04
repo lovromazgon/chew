@@ -1,0 +1,16 @@
+------------------------------------------------------------
+-- {{ .Comment }}
+
+PROCEDURE {{ .Name }} (
+  {{ range $i,$v := .Parameters }}
+    {{- if (gt $i 0) }}, {{else}}  {{ end }}
+    {{- .Name }}
+    {{- .NameOffset }}  {{ .Type }}
+    {{- .TypeOffset }}  {{ .DataType }}
+    {{- if .Default }} DEFAULT {{ .Default }} {{ end }}
+  {{ end -}}
+)
+AS
+BEGIN
+  null;
+END {{ .Name }}
