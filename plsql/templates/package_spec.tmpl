@@ -1,0 +1,9 @@
+{{ plugins .plugins "before_package" "spec_template" $ 0 }}
+CREATE OR REPLACE PACKAGE {{ .schema }}.{{ .name }} AS
+{{ plugins .plugins "top_of_package" "spec_template" $ 2 }}
+
+{{ indentTemplates .procedures "spec_template" $ 2 }}
+
+{{ plugins .plugins "bottom_of_package" "spec_template" $ 2 }}
+END {{ .name }};
+/

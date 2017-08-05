@@ -1,0 +1,9 @@
+{{ plugins .plugins "before_package" "body_template" $ 0 }}
+CREATE OR REPLACE PACKAGE BODY {{ .schema }}.{{ .name }} AS
+{{ plugins .plugins "top_of_package" "body_template" $ 2 }}
+
+{{ indentTemplates .procedures "body_template" $ 2 }}
+
+{{ plugins .plugins "bottom_of_package" "body_template" $ 2 }}
+END {{ .name }};
+/

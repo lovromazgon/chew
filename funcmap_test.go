@@ -16,6 +16,7 @@ func TestIndent_Expected(t *testing.T) {
 		{0, "", ""},
 		{5, "test", "     test"},
 		{0, "   test", "   test"},
+		{3, "multi\nline\nstring", "   multi\n   line\n   string"},
 	}
 
 	for _, tc := range testCases {

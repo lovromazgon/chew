@@ -25,9 +25,9 @@ func TestChewable_UnmarshalJSON(t *testing.T) {
 		},
 		Data: []ChewableData{
 			{
-				Templates: []string{
-					"t1",
-					"t2",
+				Templates: map[string]string{
+					"t1":"t1.out",
+					"t2":"t2.out",
 				},
 				Local: map[string]interface{}{
 					"overwrite_var": "local",

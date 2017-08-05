@@ -4,23 +4,25 @@
   "schema":"smth",
   "data": [
     {
-      "templates":[
-        "package_spec",
-        "package_body"
-      ],
-      "name":"my_package",
-      "plugins":{
-        "0":[],
-        "1":[
-          {
-            "spec_template":"block_comment",
-            "body_template":"block_comment"
-          }
-        ]
+      "templates":{
+        "package_spec":"my_package.pks",
+        "package_body":"my_package.pkb"
       },
+      "name":"my_package",
+      "plugins":[
+        {
+          "spec_template":{
+            "top_of_package":"package_comment"
+          },
+          "body_template":{
+            "top_of_package":"package_comment"
+          }
+        }
+      ],
       "procedures":[
         {
           "name":"my_proc",
+          "comment":"Thi is my comment\nmaybe with new line?",
           "spec_template":"procedure_spec",
           "body_template":"procedure_body",
           "parameters":[

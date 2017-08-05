@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
 	"bitbucket.org/lovromazgon/chew/plsql"
 )
 
@@ -21,13 +22,14 @@ func NewFuncMap(ct *Template) map[string]interface{} {
 		},
 		"indentTemplate":  ct.IndentTemplate,
 		"indentTemplates": ct.IndentTemplates,
+		"plugins":         ct.Plugins,
 		"maxLength":       MaxLength,
 		"offset":          Offset,
-		"exists":       Exists,
+		"exists":          Exists,
 	}
 
-	for k,v := range plsql.NewFuncMap() {
-		if _,ok := funcMap[k]; ok {
+	for k, v := range plsql.NewFuncMap() {
+		if _, ok := funcMap[k]; ok {
 			panic(fmt.Sprintf("Global function map already contains function %s", k))
 		}
 		funcMap[k] = v
@@ -75,6 +77,6 @@ func MaxLength(data interface{}) int {
 }
 
 func Exists(data map[string]interface{}, key string) bool {
-	_,exists := data[key]
+	_, exists := data[key]
 	return exists
 }

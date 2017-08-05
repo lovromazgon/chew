@@ -1,0 +1,10 @@
+{{ plsql.Separator }}
+{{ if exists . "comment" }}
+  {{- plsql.Comment .comment 0 }}
+{{ end }}
+{{ indentTemplate "procedure_header" . .parent 0 }}
+AS
+BEGIN
+  null;
+END {{ .name }};
+

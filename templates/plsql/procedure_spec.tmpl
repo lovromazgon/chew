@@ -1,8 +1,0 @@
-PROCEDURE {{ .name }} (
-  {{ range $i,$v := .parameters }}
-    {{- if (gt $i 0) }}, {{else}}  {{ end }}
-    {{- .name }}
-    {{- offset 30 .name  }}  {{ plsql.ParameterType .type }}  {{ .datatype }}
-    {{- if exists . "default" }} DEFAULT {{ .default }} {{ end }}
-  {{ end -}}
-);

@@ -10,7 +10,7 @@ import (
 )
 
 func TestSmth(t *testing.T) {
-	dataRaw, err := ioutil.ReadFile("data/data.json")
+	dataRaw, err := ioutil.ReadFile("plsql/data/data.json")
 	assert.NoError(t, err)
 
 	chewable := &Chewable{}
@@ -18,9 +18,9 @@ func TestSmth(t *testing.T) {
 	err = json.Unmarshal(dataRaw, chewable)
 	assert.NoError(t, err)
 
-	myChew := New("main")
-	_, err = myChew.ParseFolder("templates/plsql")
+	template := New("main")
+	_, err = template.ParseFolder("plsql/templates")
 	assert.NoError(t, err)
 
-	myChew.ExecuteChewable(os.Stdout, *chewable)
+	template.ExecuteChewable(os.Stdout, *chewable)
 }

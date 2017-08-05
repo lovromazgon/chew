@@ -12,7 +12,7 @@ type Chewable struct {
 }
 
 type ChewableData struct {
-	Templates []string
+	Templates map[string]string
 	Local     map[string]interface{}
 }
 
@@ -37,7 +37,7 @@ func (c *Chewable) UnmarshalJSON(data []byte) error {
 	}
 
 	c.Data = make([]ChewableData, len(dataSlice))
-	for i,d := range dataSlice {
+	for i, d := range dataSlice {
 		cd, err := extractChewableData(d)
 		if err != nil {
 			return errors.New(fmt.Sprintf("Could not extract object %d in field 'data': %v", i, err))
@@ -58,18 +58,18 @@ func extractChewableData(data interface{}) (cd ChewableData, err error) {
 	if !ok {
 		return cd, errors.New("Could not find field 'templates'")
 	}
-	templatesSlice, ok := templatesRaw.([]interface{})
+	templatesMap, ok := templatesRaw.(map[string]interface{})
 	if !ok {
-		return cd, errors.New("Field 'templates' is not a slice")
+		return cd, errors.New("Field 'templates' is not a map")
 	}
 
-	templates := make([]string, len(templatesSlice))
-	for i,tmplRaw := range templatesSlice {
-		tmplString, ok := tmplRaw.(string)
+	templates := make(map[string]string)
+	for tmpl, outRaw := range templatesMap {
+		outString, ok := outRaw.(string)
 		if !ok {
-			return cd, errors.New(fmt.Sprintf("Object %d in 'templates' is not a string", i))
+			return cd, errors.New(fmt.Sprintf("Value of %s in 'templates' is not a string", tmpl))
 		}
-		templates[i] = tmplString
+		templates[tmpl] = outString
 	}
 
 	delete(local, "templates")
@@ -78,9 +78,3 @@ func extractChewableData(data interface{}) (cd ChewableData, err error) {
 
 	return
 }
-
-/*
-func (u *Chewable) MarshalJSON() ([]byte, error) {
-
-}
-*/

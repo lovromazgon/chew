@@ -4,10 +4,10 @@
   "overwrite_var":"global",
   "data":[
     {
-      "templates":[
-        "t1",
-        "t2"
-      ],
+      "templates":{
+        "t1":"t1.out",
+        "t2":"t2.out"
+      },
       "local_var":3,
       "overwrite_var":"local"
     }
