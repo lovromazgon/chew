@@ -22,5 +22,5 @@ func TestSmth(t *testing.T) {
 	_, err = template.ParseFolder("plsql/templates")
 	assert.NoError(t, err)
 
-	template.ExecuteChewable(os.Stdout, *chewable)
+	template.ExecuteChewable(WriterWrapper{os.Stdout}, *chewable)
 }

@@ -3,15 +3,11 @@ package chew
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
 )
-
-// spf13 / cobra
-// Masterminds / sprig
 
 const (
 	TEMPLATE_SUFFIX = ".tmpl"
@@ -43,9 +39,10 @@ func (ct *Template) ParseFolder(folderPath string) (*Template, error) {
 	return ct, err
 }
 
-func (ct *Template) ExecuteChewable(w io.Writer, c Chewable) error {
+func (ct *Template) ExecuteChewable(w Writer, c Chewable) error {
 	for _, cd := range c.Data {
-		for tmpl, _ := range cd.Templates {
+		for tmpl, out := range cd.Templates {
+			w.SetOut(out)
 			err := ct.Template.ExecuteTemplate(w, tmpl+TEMPLATE_SUFFIX, prepareData(c, cd))
 			if err != nil {
 				return err
@@ -132,8 +129,12 @@ func (ct *Template) Plugins(pluginsRaw interface{}, insertPoint, templateField s
 			} else {
 				panic(fmt.Sprintf("Field %s in %+v is not a string or slice!", templateField, data))
 			}
-		} else {
+		} else if insertPoint == "" {
+			// no insert point, this means it is not a plugin but a nested template
 			panic(fmt.Sprintf("Could not find field %s in %+v", templateField, data))
+		} else {
+			// we are searching for an insert point - not needed to be found
+			continue
 		}
 
 		buffer.WriteString(ct.IndentTemplate(tmpl, data, parent, indentSize))
