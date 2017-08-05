@@ -1,13 +1,23 @@
 {
-  "version": 1,
-  "data":
+  "version": "0.1",
+  "global_var": "my_var",
+  "schema":"smth",
+  "data": [
     {
       "templates":[
         "package_spec",
         "package_body"
       ],
       "name":"my_package",
-      "schema":"smth",
+      "plugins":{
+        "0":[],
+        "1":[
+          {
+            "spec_template":"block_comment",
+            "body_template":"block_comment"
+          }
+        ]
+      },
       "procedures":[
         {
           "name":"my_proc",
@@ -19,6 +29,17 @@
               "name":"p_my_param",
               "datatype":"VARCHAR2",
               "default":"'empty'"
+            },
+            {
+              "type":"IN OUT",
+              "name":"p_varch",
+              "datatype":"VARCHAR2"
+            },
+            {
+              "type":"OUT",
+              "name":"p_num",
+              "datatype":"NUMBER",
+              "default":"'0'"
             }
           ]
         },
@@ -37,5 +58,5 @@
         }
       ]
     }
-
+  ]
 }

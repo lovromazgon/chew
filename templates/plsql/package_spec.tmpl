@@ -1,0 +1,9 @@
+{{ indentTemplates (index .plugins "0") "spec_template" $ 0 }}
+CREATE OR REPLACE PACKAGE {{ .schema }}.{{ .name }} AS
+{{ indentTemplates (index .plugins "1") "spec_template" $ 2 }}
+
+{{ indentTemplates .procedures "spec_template" $ 2 }}
+
+{{ indentTemplates (index .plugins "2") "spec_template" $ 2 }}
+END {{ .name }};
+/

@@ -1,0 +1,15 @@
+{
+  "version":1,
+  "global_var":2,
+  "overwrite_var":"global",
+  "data":[
+    {
+      "templates":[
+        "t1",
+        "t2"
+      ],
+      "local_var":3,
+      "overwrite_var":"local"
+    }
+  ]
+}
