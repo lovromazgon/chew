@@ -9,7 +9,7 @@ import (
 )
 
 func TestChewable_UnmarshalJSON(t *testing.T) {
-	dataRaw, err := ioutil.ReadFile("test/data/chewable_test.json")
+	dataRaw, err := ioutil.ReadFile("test/data/example.json")
 	assert.NoError(t, err)
 
 	chewable := &Chewable{}

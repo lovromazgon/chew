@@ -11,8 +11,6 @@ import (
 
 const (
 	TEMPLATE_SUFFIX = ".tmpl"
-	VERSION         = "0.0.1"
-	VERSION_DATE    = "05.08.2017"
 )
 
 type Template struct {
@@ -104,7 +102,7 @@ func (ct *Template) Plugins(pluginsRaw interface{}, insertPoint, templateField s
 	}
 
 	buffer := new(bytes.Buffer)
-	for i, data := range pluginsSlice {
+	for _, data := range pluginsSlice {
 		var dataMap map[string]interface{}
 		dataMap, ok := data.(map[string]interface{})
 		if !ok {
@@ -120,27 +118,25 @@ func (ct *Template) Plugins(pluginsRaw interface{}, insertPoint, templateField s
 					if templateString, ok := templateRaw.(string); ok {
 						tmpl = templateString
 					} else {
-						panic(fmt.Sprintf("Field %s.%s in %+v is not a string or slice!", templateField, insertPoint, data))
+						panic(fmt.Sprintf("Field %s.%s is not a string or slice!", templateField, insertPoint))
 					}
 				} else {
 					// point of insert not found for this plugin - no problem
 					continue
 				}
 			} else {
-				panic(fmt.Sprintf("Field %s in %+v is not a string or slice!", templateField, data))
+				panic(fmt.Sprintf("Field %s is not a string or slice!", templateField))
 			}
 		} else if insertPoint == "" {
 			// no insert point, this means it is not a plugin but a nested template
-			panic(fmt.Sprintf("Could not find field %s in %+v", templateField, data))
+			panic(fmt.Sprintf("Could not find field %s", templateField))
 		} else {
 			// we are searching for an insert point - not needed to be found
 			continue
 		}
 
 		buffer.WriteString(ct.IndentTemplate(tmpl, data, parent, indentSize))
-		if i < len(pluginsSlice)-1 {
-			buffer.WriteString("\n")
-		}
+		buffer.WriteString("\n")
 	}
-	return buffer.String()
+	return strings.TrimRight(buffer.String(), "\n")
 }

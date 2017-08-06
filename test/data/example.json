@@ -1,0 +1,25 @@
+{
+  "data":[
+    {
+      "name":"just an example",
+      "templates": {
+        "test_plugins_main":"example.out"
+      },
+      "plugins":[
+        {
+          "name":"First",
+          "template": {
+            "insertion_point_1": "test_plugins_plugin1_ita",
+            "insertion_point_2": "test_plugins_plugin1_ger"
+          }
+        },
+        {
+          "name":"Second",
+          "template": {
+            "insertion_point_2": "test_plugins_plugin2"
+          }
+        }
+      ]
+    }
+  ]
+}

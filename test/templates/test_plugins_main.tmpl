@@ -1,0 +1,12 @@
+Hi, I am {{ .name }}
+
+Here are my plugins for insertion_point_1 (indented by 2):
+{{ plugins .plugins "insertion_point_1" "template" $ 2 }}
+
+Here are my plugins for insertion_point_2 (indented by 6):
+{{ plugins .plugins "insertion_point_2" "template" $ 6 }}
+
+Here would be my plugins for insertion_point_3 (if I had some):
+{{ plugins .plugins "insertion_point_3" "template" $ 0 }}
+
+THE END
