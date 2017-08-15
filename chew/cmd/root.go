@@ -50,14 +50,14 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVarP(&dataPath, "data", "d", "", "Path to input JSON file with data")
-	RootCmd.PersistentFlags().StringVarP(&templatesPath, "templates", "t", "", "Path to folder with templates (will be read recursively)")
-	RootCmd.PersistentFlags().StringVarP(&outPath, "out", "o", "", "Path to output folder")
+	RootCmd.Flags().StringVarP(&dataPath, "data", "d", "", "Path to input JSON file with data")
+	RootCmd.Flags().StringVarP(&templatesPath, "templates", "t", "", "Path to folder with templates (will be read recursively)")
+	RootCmd.Flags().StringVarP(&outPath, "out", "o", "", "Path to output folder")
 
-	RootCmd.MarkPersistentFlagFilename("data", ".json")
-	RootCmd.MarkPersistentFlagRequired("data")
-	RootCmd.MarkPersistentFlagRequired("templates")
-	RootCmd.MarkPersistentFlagRequired("out")
+	RootCmd.MarkFlagFilename("data", ".json")
+	RootCmd.MarkFlagRequired("data")
+	RootCmd.MarkFlagRequired("templates")
+	RootCmd.MarkFlagRequired("out")
 }
 
 // ----------------------------------------------------------------

@@ -1,4 +1,4 @@
-package chew
+package funcmap
 
 import (
 	"testing"
@@ -106,5 +106,21 @@ func TestMaxLength_Panic(t *testing.T) {
 			MaxLength(tc.Slice)
 		})
 	}
+}
 
+func TestExists_Expected(t *testing.T) {
+	testCases := []struct {
+		Map map[string]interface{}
+		Key string
+		Expected bool
+	}{
+		{map[string]interface{}{"a":"b"}, "a", true},
+		{map[string]interface{}{"a":"b"}, "b", false},
+		{map[string]interface{}{}, "a", false},
+		{nil, "a", false},
+	}
+
+	for _, tc := range testCases {
+		assert.Equal(t, tc.Expected, Exists(tc.Map, tc.Key))
+	}
 }

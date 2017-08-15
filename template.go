@@ -6,7 +6,11 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
+	"time"
+
+	"bitbucket.org/lovromazgon/chew/funcmap"
 )
 
 const (
@@ -15,12 +19,59 @@ const (
 
 type Template struct {
 	*template.Template
+	Functions funcmap.Functions
+
+	injectFuncsOnce sync.Once
 }
 
 func New(name string) *Template {
-	ct := &Template{template.New(name)}
-	ct.Funcs(NewFuncMap(ct)).Option("missingkey=error")
+	ct := &Template{
+		Template:  template.New(name),
+		Functions: funcmap.Global,
+	}
+	ct.InjectFunctions()
+	ct.Option("missingkey=error")
 	return ct
+}
+
+func (ct *Template) InjectFunctions() {
+	ct.injectFuncsOnce.Do(func() {
+		ct.Functions = ct.Functions.MustAddFunc(funcmap.NewFunc(
+			func() map[string]interface{} {
+				return map[string]interface{}{
+					"version":        Version,
+					"version_date":   VersionDate,
+					"execution_date": time.Now().Format("02.01.2006"),
+					"execution_time": time.Now().Format("15:04"),
+				}
+			},
+			"chew",
+			"TODO",
+			"TODO",
+		)).MustAddFunc(funcmap.NewFunc(
+			ct.IndentTemplate,
+			"indentTemplate",
+			"Use indentTemplate to execute a child template and indent the content of the template with spaces."+
+				" This function takes 3 parameters:\n"+
+				"- template string : the name of the nested template\n"+
+				"- data interface{} : the data on which the nested template will be evaluated\n"+
+				"- parent interface{} : the parent who calls the nested template (will be available in the nested template in field .parent)\n"+
+				"- indentSize int : number of spaces to indent this template",
+			"{{ indentTemplate .child.template_field .child . 2 }}",
+		)).MustAddFunc(funcmap.NewFunc(
+			ct.IndentTemplates,
+			"indentTemplates",
+			"TODO",
+			"TODO",
+		)).MustAddFunc(funcmap.NewFunc(
+			ct.Plugins,
+			"plugins",
+			"TODO",
+			"TODO",
+		))
+
+		ct.Funcs(ct.Functions.FuncMap())
+	})
 }
 
 func (ct *Template) ParseFolder(folderPath string) (*Template, error) {
@@ -82,7 +133,7 @@ func (ct *Template) IndentTemplate(template string, data interface{}, parent int
 		panic(err)
 	}
 
-	return Indent(indentSize, buffer.String())
+	return funcmap.Indent(indentSize, buffer.String())
 }
 
 func (ct *Template) IndentTemplates(nestedTemplates interface{}, templateField string, parent interface{}, indentSize int) string {

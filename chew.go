@@ -31,13 +31,13 @@
 //
 // Content of bearing.tmpl:
 //
-// Custom functions:
-//   {{-/* plugins [name of template] [data] [parent] [indent] */}}
-//   {{-/* indentTemplate [name of template] [data] [parent] [indent] */}}
-//
 package chew
 
-const (
-	VERSION      = "0.0.1"
-	VERSION_DATE = "05.08.2017"
+import (
+	_ "bitbucket.org/lovromazgon/chew-plsql"
+)
+
+var (
+	Version     string
+	VersionDate string
 )
