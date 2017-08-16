@@ -14,7 +14,7 @@ func init() {
 		Func: Indent,
 		Doc: funcmap.FuncDoc{
 			Name:    "indent",
-			Text:    "With indent you can prepend spaces to a multi-line string.",
+			Text:    "Indent prepends spaces to every line in a multi-line string",
 			Example: "{{ indent 2 \"my beautiful\\n multiline string\" }}",
 		},
 	})
@@ -22,7 +22,7 @@ func init() {
 		Func: MaxLength,
 		Doc: funcmap.FuncDoc{
 			Name:    "maxLength",
-			Text:    "Returns the length of the longest field in a string slice",
+			Text:    "MaxLength returns the length of the longest field in a []string",
 			Example: "{{ maxLength .myStringSlice }}",
 		},
 	})
@@ -30,7 +30,7 @@ func init() {
 		Func: Offset,
 		Doc: funcmap.FuncDoc{
 			Name:    "offset",
-			Text:    "Returns the offset in blank spaces so that the input string reaches the input length",
+			Text:    "Offset returns a string of blank spaces so that the input string reaches the input length",
 			Example: "{{ offset 25 \"Need 4 spaces till 25\" }}",
 		},
 	})
@@ -38,12 +38,13 @@ func init() {
 		Func: Exists,
 		Doc: funcmap.FuncDoc{
 			Name:    "exists",
-			Text:    "Returns true if field exists in map, else false",
+			Text:    "Exists returns true if field exists in a map, else false",
 			Example: "{{ exists . \"my_field\" }}",
 		},
 	})
 }
 
+// Indent prepends spaces to every line in a multi-line string.
 func Indent(identSize int, a string) string {
 	if a == "" {
 		return strings.Repeat(" ", identSize)
@@ -63,11 +64,13 @@ func Indent(identSize int, a string) string {
 	return strings.TrimRight(buffer.String(), "\n")
 }
 
+// Offset returns a string of blank spaces so that the input string reaches the input length.
 func Offset(length int, a interface{}) string {
 	aStr := fmt.Sprint(a)
 	return strings.Repeat(" ", length-len(aStr))
 }
 
+// MaxLength returns the length of the longest field in a []string.
 func MaxLength(data interface{}) int {
 	dataSlice, ok := data.([]string)
 	if !ok {
@@ -82,6 +85,7 @@ func MaxLength(data interface{}) int {
 	return length
 }
 
+// Exists returns true if field exists in a map, else false.
 func Exists(data map[string]interface{}, key string) bool {
 	_, exists := data[key]
 	return exists

@@ -5,12 +5,13 @@ import (
 	"bitbucket.org/lovromazgon/chew/funcmap"
 	"github.com/spf13/cobra"
 	"os"
+	"regexp"
 )
 
 func init() {
 	RootCmd.AddCommand(functionsCmd)
 
-	functionsCmd.Flags().StringVarP(&function, "func", "f", "", "Get documentation for only one function")
+	functionsCmd.Flags().StringVarP(&filter, "filter", "f", "", "Get documentation for functions that match the regex")
 }
 
 var functionsCmd = &cobra.Command{
@@ -23,7 +24,7 @@ var functionsCmd = &cobra.Command{
 // ----------------------------------------------------------------
 
 var (
-	function string
+	filter string
 )
 
 func functionsRun(cmd *cobra.Command, args []string) error {
@@ -34,17 +35,22 @@ func functionsRun(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	chewable := functionsToChewable(template.Functions, function)
+	regex, err := regexp.Compile(filter)
+	if err != nil {
+		return err
+	}
+
+	chewable := functionsToChewable(template.Functions, regex)
 	return template.ExecuteChewable(&chew.WriterWrapper{os.Stdout}, *chewable)
 }
 
-func functionsToChewable(functions funcmap.Functions, filter string) *chew.Chewable {
+func functionsToChewable(functions funcmap.Functions, filter *regexp.Regexp) *chew.Chewable {
 	chewable := &chew.Chewable{
 		Data: make([]chew.ChewableData, len(functions)),
 	}
 
 	for i,fun := range functions {
-		if filter != "" && filter != fun.Doc.Name {
+		if filter != nil && !filter.Match([]byte(fun.Doc.Name)) {
 			continue
 		}
 

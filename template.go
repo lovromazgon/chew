@@ -12,10 +12,13 @@ import (
 	"bitbucket.org/lovromazgon/chew/funcmap"
 )
 
-const (
-	TEMPLATE_SUFFIX = ".tmpl"
+var (
+	templateSuffix = ".tmpl"
 )
 
+// Template wraps *text/template.Template and adds some additional functionality. It should be
+// created via chew.New. If a manual instantiation is used the method InjectFunctions should be
+// called before processing templates to be able to use all custom chew functions.
 type Template struct {
 	*template.Template
 	Functions funcmap.Functions
@@ -23,6 +26,7 @@ type Template struct {
 	injectFuncsOnce sync.Once
 }
 
+// New creates a new chew.Template with the provided name and injects the template functions.
 func New(name string) *Template {
 	ct := &Template{
 		Template:  template.New(name),
@@ -33,6 +37,8 @@ func New(name string) *Template {
 	return ct
 }
 
+// InjectFunctions adds template specific functions to Template.Functions and adds the
+// function map to the template.
 func (ct *Template) InjectFunctions() {
 	ct.injectFuncsOnce.Do(func() {
 		ct.Functions = ct.Functions.MustAddFunc(&funcmap.Func{
@@ -78,9 +84,11 @@ func (ct *Template) InjectFunctions() {
 	})
 }
 
+// ParseFolder recursively walks through the provided folder path and parses every template
+// it can find with the template suffix.
 func (ct *Template) ParseFolder(folderPath string) (*Template, error) {
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
-		if strings.Contains(path, TEMPLATE_SUFFIX) {
+		if strings.Contains(path, templateSuffix) {
 			_, err = ct.ParseFiles(path)
 		}
 		return err
@@ -89,11 +97,15 @@ func (ct *Template) ParseFolder(folderPath string) (*Template, error) {
 	return ct, err
 }
 
+// ExecuteChewable loops through all ChewableData in Chewable and executes every Template defined
+// in ChewableData.Templates. The output is written to the supplied chew.Writer, which also gets notified
+// about the desired output filename before every template execution.
+// If template.Template.ExecuteTemplate returns an error the execution stops and returns it.
 func (ct *Template) ExecuteChewable(w Writer, c Chewable) error {
 	for _, cd := range c.Data {
 		for tmpl, out := range cd.Templates {
 			w.SetOut(out)
-			err := ct.Template.ExecuteTemplate(w, tmpl+TEMPLATE_SUFFIX, prepareData(c, cd))
+			err := ct.Template.ExecuteTemplate(w, tmpl+templateSuffix, prepareData(c, cd))
 			if err != nil {
 				return err
 			}
@@ -102,8 +114,8 @@ func (ct *Template) ExecuteChewable(w Writer, c Chewable) error {
 	return nil
 }
 
-// merges local data from ChewableData and global data from Chewable
-// if a key exists in both global and local, then local is used
+// Merges local data from ChewableData and global data from Chewable.
+// If a key exists in both global and local, then local is used.
 func prepareData(c Chewable, cd ChewableData) map[string]interface{} {
 	data := make(map[string]interface{})
 
@@ -117,7 +129,11 @@ func prepareData(c Chewable, cd ChewableData) map[string]interface{} {
 	return data
 }
 
-// allows user to indent the template which is inserted
+// IndentTemplate is similar to the built-in template function with the additional functionality
+// of indenting the content of the template and accessing parent data.
+// It takes the name of the template, the data which will be sent to the template when executing it,
+// the parent data which will be accessible in the executed template and the number of spaces which will
+// indent the content of the processed template.
 func (ct *Template) IndentTemplate(template string, data interface{}, parent interface{}, indentSize int) string {
 	dataMap, err := ToMap(data)
 	if err != nil {
@@ -127,9 +143,9 @@ func (ct *Template) IndentTemplate(template string, data interface{}, parent int
 	dataMap["parent"] = parent
 
 	buffer := new(bytes.Buffer)
-	tmpl := ct.Lookup(template + TEMPLATE_SUFFIX)
+	tmpl := ct.Lookup(template + templateSuffix)
 	if tmpl == nil {
-		panic(fmt.Sprintf("Could not find template '%s%s'", template, TEMPLATE_SUFFIX))
+		panic(fmt.Sprintf("Could not find template '%s%s'", template, templateSuffix))
 	}
 	if err := tmpl.Execute(buffer, dataMap); err != nil {
 		panic(err)
@@ -138,10 +154,19 @@ func (ct *Template) IndentTemplate(template string, data interface{}, parent int
 	return Indent(indentSize, buffer.String())
 }
 
+// IndentTemplates is similar to IndentTemplate, only that it processes all templates defined in a slice.
+// It takes the slice of objects which carry the data about the nested templates, the field in the nested template
+// object which carries the name of the template, the parent data which will be accessible in the executed template
+// and the number of spaces which will indent the content of the processed template.
 func (ct *Template) IndentTemplates(nestedTemplates interface{}, templateField string, parent interface{}, indentSize int) string {
 	return ct.Plugins(nestedTemplates, "", templateField, parent, indentSize)
 }
 
+// Plugins is similar to IndentTemplates, only that it skips nested templates which don't define a template
+// for the insertion point. It takes the slice of objects which carry the data about the plugins, the insertion
+// point where the plugin will be inserted, the field in the plugin object which carries the name of the template,
+// the parent data which will be accessible in the executed template and the number of spaces which will indent
+// the content of the processed template.
 func (ct *Template) Plugins(pluginsRaw interface{}, insertPoint, templateField string, parent interface{}, indentSize int) string {
 	if pluginsRaw == nil {
 		// it can be tha the key doesn't exist

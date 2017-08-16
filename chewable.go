@@ -7,16 +7,25 @@ import (
 	"reflect"
 )
 
+// Chewable is the main object which carries the data in chew. It stores everything that is used
+// when generating the data. The slice of ChewableData is looped through and used in executing
+// the specified templates. Chewable also carries a map of objects called Global, which is accessible
+// in every template.
 type Chewable struct {
 	Global map[string]interface{}
 	Data   []ChewableData
 }
 
+// ChewableData is a collection of data which can be used in executing one or more templates.
+// The field Templates stores a map in which the key denotes the name of the template which will be generated
+// and the value denotes the output filename. Everything in field Local will be accessible in the templates.
+// If a key in the map Local also exists in the map Global in Chewable, the Local value will be used.
 type ChewableData struct {
 	Templates map[string]string
 	Local     map[string]interface{}
 }
 
+// UnmarshalJSON parses data from JSON into Chewable. Returns an error if parsing was unsuccessful, else nil.
 func (c *Chewable) UnmarshalJSON(data []byte) error {
 	global := make(map[string]interface{})
 
@@ -41,7 +50,7 @@ func (c *Chewable) UnmarshalJSON(data []byte) error {
 	for i, d := range dataSlice {
 		cd, err := extractChewableData(d)
 		if err != nil {
-			return errors.New(fmt.Sprintf("Could not extract object %d in field 'data': %v", i, err))
+			return fmt.Errorf("Could not extract object %d in field 'data': %v", i, err)
 		}
 		c.Data[i] = cd
 	}
@@ -68,7 +77,7 @@ func extractChewableData(data interface{}) (cd ChewableData, err error) {
 	for tmpl, outRaw := range templatesMap {
 		outString, ok := outRaw.(string)
 		if !ok {
-			return cd, errors.New(fmt.Sprintf("Value of %s in 'templates' is not a string", tmpl))
+			return cd, fmt.Errorf("Value of %s in 'templates' is not a string", tmpl)
 		}
 		templates[tmpl] = outString
 	}
@@ -80,6 +89,10 @@ func extractChewableData(data interface{}) (cd ChewableData, err error) {
 	return
 }
 
+// ToMap takes an object and extracts a map[string]interface{}. If the object is already a map[string]interface{}
+// it is returned as it is. If the object is a struct, then the fields of the struct are mapped to a map
+// where the keys are the names of the fields, while the values are the actual values. If anything else is
+// passed to the function an error is thrown.
 func ToMap(data interface{}) (map[string]interface{}, error) {
 	var dataMap map[string]interface{}
 	var ok bool
@@ -88,7 +101,8 @@ func ToMap(data interface{}) (map[string]interface{}, error) {
 		// nothing to do, this is already a map
 	} else {
 		dataVal := reflect.Indirect(reflect.ValueOf(data))
-		if dataVal.Kind() == reflect.Struct {
+		switch dataVal.Kind() {
+		case reflect.Struct:
 			dataMap = make(map[string]interface{})
 
 			for i := 0; i < dataVal.NumField(); i++ {
@@ -96,11 +110,11 @@ func ToMap(data interface{}) (map[string]interface{}, error) {
 				fieldValue := dataVal.Field(i).Interface()
 				dataMap[fieldName] = fieldValue
 			}
-		}
-	}
 
-	if dataMap == nil {
-		return nil, errors.New("Could not extract map!")
+		default:
+			return nil, fmt.Errorf("Could not extract map from type %s", dataVal.Type())
+
+		}
 	}
 
 	return dataMap, nil

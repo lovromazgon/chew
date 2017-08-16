@@ -96,22 +96,22 @@ func TestTemplate_Plugins(t *testing.T) {
 	template.ParseFolder("test/templates")
 
 	// for insertion point 1 only the first plugin should be found
-	actual_ins1 := template.Plugins(data["plugins"], "insertion_point_1", "template", data, 1)
-	expected_ins1 := ` Plugin numero uno:
+	actualIns1 := template.Plugins(data["plugins"], "insertion_point_1", "template", data, 1)
+	expectedIns1 := ` Plugin numero uno:
  I got inserted by 'First'`
-	assert.Equal(t, expected_ins1, actual_ins1)
+	assert.Equal(t, expectedIns1, actualIns1)
 
 	// for insertion point 2 both plugins should be found
-	actual_ins2 := template.Plugins(data["plugins"], "insertion_point_2", "template", data, 3)
-	expected_ins2 := `   Plugin Nummer eins:
+	actualIns2 := template.Plugins(data["plugins"], "insertion_point_2", "template", data, 3)
+	expectedIns2 := `   Plugin Nummer eins:
    I got inserted by 'First'
    Plugin Nummer zwei:
    I got inserted by 'Second'`
-	assert.Equal(t, expected_ins2, actual_ins2)
+	assert.Equal(t, expectedIns2, actualIns2)
 
 	// for insertion point 3 no plugins should be found
-	actual_ins3 := template.Plugins(data["plugins"], "insertion_point_3", "template", data, 5)
-	expected_ins3 := ""
+	actualIns3 := template.Plugins(data["plugins"], "insertion_point_3", "template", data, 5)
+	expectedIns3 := ""
 
-	assert.Equal(t, expected_ins3, actual_ins3)
+	assert.Equal(t, expectedIns3, actualIns3)
 }
