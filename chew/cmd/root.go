@@ -33,8 +33,8 @@ var RootCmd = &cobra.Command{
 	Long: `Chew is a CLI for Go Templates which generates output based on input data.
 It parses all templates that it can find in the defined folder and then
 generates the output based on the data in the JSON input.`,
-	PreRunE: PreChew,
-	RunE:    Chew,
+	PreRunE: preChew,
+	RunE:    chewRun,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -68,7 +68,7 @@ var (
 	outPath       string
 )
 
-func PreChew(cmd *cobra.Command, args []string) error {
+func preChew(cmd *cobra.Command, args []string) error {
 	if templatesPath == "" {
 		return errors.New("Templates flag is required!")
 	} else if dataPath == "" {
@@ -84,7 +84,7 @@ func PreChew(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func Chew(cmd *cobra.Command, args []string) error {
+func chewRun(cmd *cobra.Command, args []string) error {
 	dataRaw, err := ioutil.ReadFile(dataPath)
 	if err != nil {
 		return err
@@ -103,6 +103,5 @@ func Chew(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	template.ExecuteChewable(&chew.MultiFileWriter{Out: outPath}, *chewable)
-	return nil
+	return template.ExecuteChewable(&chew.MultiFileWriter{Out: outPath}, *chewable)
 }

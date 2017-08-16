@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 type Chewable struct {
@@ -49,18 +50,18 @@ func (c *Chewable) UnmarshalJSON(data []byte) error {
 }
 
 func extractChewableData(data interface{}) (cd ChewableData, err error) {
-	local, ok := data.(map[string]interface{})
-	if !ok {
-		return cd, errors.New("Object is not of type map[string]interface{}")
+	local, err := ToMap(data)
+	if err != nil {
+		return cd, err
 	}
 
 	templatesRaw, ok := local["templates"]
 	if !ok {
 		return cd, errors.New("Could not find field 'templates'")
 	}
-	templatesMap, ok := templatesRaw.(map[string]interface{})
-	if !ok {
-		return cd, errors.New("Field 'templates' is not a map")
+	templatesMap, err := ToMap(templatesRaw)
+	if err != nil {
+		return cd, err
 	}
 
 	templates := make(map[string]string)
@@ -77,4 +78,30 @@ func extractChewableData(data interface{}) (cd ChewableData, err error) {
 	cd.Templates = templates
 
 	return
+}
+
+func ToMap(data interface{}) (map[string]interface{}, error) {
+	var dataMap map[string]interface{}
+	var ok bool
+
+	if dataMap, ok = data.(map[string]interface{}); ok {
+		// nothing to do, this is already a map
+	} else {
+		dataVal := reflect.Indirect(reflect.ValueOf(data))
+		if dataVal.Kind() == reflect.Struct {
+			dataMap = make(map[string]interface{})
+
+			for i := 0; i < dataVal.NumField(); i++ {
+				fieldName := dataVal.Type().Field(i).Name
+				fieldValue := dataVal.Field(i).Interface()
+				dataMap[fieldName] = fieldValue
+			}
+		}
+	}
+
+	if dataMap == nil {
+		return nil, errors.New("Could not extract map!")
+	}
+
+	return dataMap, nil
 }

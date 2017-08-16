@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 	"text/template"
-	"time"
 
 	"bitbucket.org/lovromazgon/chew/funcmap"
 )
@@ -36,39 +35,44 @@ func New(name string) *Template {
 
 func (ct *Template) InjectFunctions() {
 	ct.injectFuncsOnce.Do(func() {
-		ct.Functions = ct.Functions.MustAddFunc(funcmap.NewFunc(
-			func() map[string]interface{} {
-				return map[string]interface{}{
-					"version":        Version,
-					"version_date":   VersionDate,
-					"execution_date": time.Now().Format("02.01.2006"),
-					"execution_time": time.Now().Format("15:04"),
-				}
+		ct.Functions = ct.Functions.MustAddFunc(&funcmap.Func{
+			Func: ct.IndentTemplate,
+			Doc: funcmap.FuncDoc{
+				Name: "indentTemplate",
+				Text: "Use indentTemplate to execute a child template and indent the content of the template with spaces." +
+					" This function takes 4 parameters:\n" +
+					"- template string    : the name of the nested template\n" +
+					"- data interface{}   : the data on which the nested template will be evaluated\n" +
+					"- parent interface{} : the parent who calls the nested template (will be available in the nested template in field .parent)\n" +
+					"- indentSize int     : number of spaces to indent this template",
+				Example: "{{ indentTemplate .child.template_field .child . 2 }}",
 			},
-			"chew",
-			"TODO",
-			"TODO",
-		)).MustAddFunc(funcmap.NewFunc(
-			ct.IndentTemplate,
-			"indentTemplate",
-			"Use indentTemplate to execute a child template and indent the content of the template with spaces."+
-				" This function takes 3 parameters:\n"+
-				"- template string : the name of the nested template\n"+
-				"- data interface{} : the data on which the nested template will be evaluated\n"+
-				"- parent interface{} : the parent who calls the nested template (will be available in the nested template in field .parent)\n"+
-				"- indentSize int : number of spaces to indent this template",
-			"{{ indentTemplate .child.template_field .child . 2 }}",
-		)).MustAddFunc(funcmap.NewFunc(
-			ct.IndentTemplates,
-			"indentTemplates",
-			"TODO",
-			"TODO",
-		)).MustAddFunc(funcmap.NewFunc(
-			ct.Plugins,
-			"plugins",
-			"TODO",
-			"TODO",
-		))
+		}).MustAddFunc(&funcmap.Func{
+			Func: ct.IndentTemplates,
+			Doc: funcmap.FuncDoc{
+				Name: "indentTemplates",
+				Text: "Use indentTemplate to execute multiple child templates and indent the content with spaces." +
+					"This function takes 4 parameters:\n" +
+					"- nestedTemplates []interface{} : the array whic contains the nested templates\n" +
+					"- templateField string          : the name of the field which contains the name of the template to be used\n" +
+					"- parent interface{}            : the parent who calls the nested template (will be available in the nested template in field .parent)\n" +
+					"- indentSize int                : number of spaces to indent this template",
+				Example: "{{ indentTemplates .childArray \"template_field\" . 2 }}",
+			},
+		}).MustAddFunc(&funcmap.Func{
+			Func: ct.Plugins,
+			Doc: funcmap.FuncDoc{
+				Name: "plugins",
+				Text: "Use plugins to evaluate 0 or more plugins which can choose which template to call on which insert point." +
+					"This function takes 5 parameters:\n" +
+					"- plugins []interface{} : the array which contains the plugins\n" +
+					"- insertPoint string    : the insertion point defined in the parent template where plugins can insert some content\n" +
+					"- templateField string  : the name of the field which contains the name of the template to be used\n" +
+					"- parent interface{}    : the parent who calls the nested template (will be available in the nested template in field .parent)\n" +
+					"- indentSize int        : number of spaces to indent this template",
+				Example: "{{ plugins .pluginsArray \"insert_point_1\" \"template_field\" . 2 }}",
+			},
+		})
 
 		ct.Funcs(ct.Functions.FuncMap())
 	})
@@ -78,9 +82,6 @@ func (ct *Template) ParseFolder(folderPath string) (*Template, error) {
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
 		if strings.Contains(path, TEMPLATE_SUFFIX) {
 			_, err = ct.ParseFiles(path)
-			if err != nil {
-				return err
-			}
 		}
 		return err
 	})
@@ -118,10 +119,11 @@ func prepareData(c Chewable, cd ChewableData) map[string]interface{} {
 
 // allows user to indent the template which is inserted
 func (ct *Template) IndentTemplate(template string, data interface{}, parent interface{}, indentSize int) string {
-	dataMap, ok := data.(map[string]interface{})
-	if !ok {
-		panic("nested template is not a map!")
+	dataMap, err := ToMap(data)
+	if err != nil {
+		panic(err)
 	}
+
 	dataMap["parent"] = parent
 
 	buffer := new(bytes.Buffer)
@@ -129,7 +131,7 @@ func (ct *Template) IndentTemplate(template string, data interface{}, parent int
 	if tmpl == nil {
 		panic(fmt.Sprintf("Could not find template '%s%s'", template, TEMPLATE_SUFFIX))
 	}
-	if err := tmpl.Execute(buffer, data); err != nil {
+	if err := tmpl.Execute(buffer, dataMap); err != nil {
 		panic(err)
 	}
 
@@ -149,15 +151,14 @@ func (ct *Template) Plugins(pluginsRaw interface{}, insertPoint, templateField s
 	var pluginsSlice []interface{}
 	pluginsSlice, ok := pluginsRaw.([]interface{})
 	if !ok {
-		panic("nested templates are not an array!")
+		panic("nested templates are not a slice!")
 	}
 
 	buffer := new(bytes.Buffer)
 	for _, data := range pluginsSlice {
-		var dataMap map[string]interface{}
-		dataMap, ok := data.(map[string]interface{})
-		if !ok {
-			panic("nested template is not a map!")
+		dataMap, err := ToMap(data)
+		if err != nil {
+			panic(err)
 		}
 
 		var tmpl string

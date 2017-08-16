@@ -27,45 +27,6 @@ type Func struct {
 	Doc  FuncDoc
 }
 
-type FuncDoc struct {
-	Name     string
-	Text     string
-	Example  string
-	Template string
-
-	NestedFuncs []FuncDoc
-}
-
-func NewFunc(fun interface{}, name, text, example string, nestedFuncs ...FuncDoc) *Func {
-	f := &Func{
-		Func: fun,
-		Doc: FuncDoc{
-			Name:        name,
-			Text:        text,
-			Example:     example,
-			NestedFuncs: nestedFuncs,
-		},
-	}
-
-	if len(nestedFuncs) == 0 {
-		f.Doc.Template = "simpleFuncDoc"
-	} else {
-		f.Doc.Template = "nestedFuncDoc"
-	}
-
-	return f
-}
-
-func NewNestedFuncDoc(name, text, example string) FuncDoc {
-	return FuncDoc{
-		Name:        name,
-		Text:        text,
-		Example:     example,
-		Template:    "simpleFuncDoc",
-		NestedFuncs: nil,
-	}
-}
-
 type Functions []*Func
 
 func (fs Functions) FuncMap() map[string]interface{} {

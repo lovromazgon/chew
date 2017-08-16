@@ -8,30 +8,38 @@ import (
 )
 
 func init() {
-	AddFunc(NewFunc(
-		Indent,
-		"indent",
-		"TODO",
-		"TODO",
-	))
-	AddFunc(NewFunc(
-		MaxLength,
-		"maxLength",
-		"TODO",
-		"TODO",
-	))
-	AddFunc(NewFunc(
-		Offset,
-		"offset",
-		"TODO",
-		"TODO",
-	))
-	AddFunc(NewFunc(
-		Exists,
-		"exists",
-		"TODO",
-		"TODO",
-	))
+	AddFunc(&Func{
+		Func: Indent,
+		Doc: FuncDoc{
+			Name:    "indent",
+			Text:    "With indent you can prepend spaces to a multi-line string.",
+			Example: "{{ indent 2 \"my beautiful\\n multiline string\" }}",
+		},
+	})
+	AddFunc(&Func{
+		Func: MaxLength,
+		Doc: FuncDoc{
+			Name:    "maxLength",
+			Text:    "Returns the length of the longest field in a string slice",
+			Example: "{{ maxLength .myStringSlice }}",
+		},
+	})
+	AddFunc(&Func{
+		Func: Offset,
+		Doc: FuncDoc{
+			Name:    "offset",
+			Text:    "Returns the offset in blank spaces so that the input string reaches the input length",
+			Example: "{{ offset 25 \"Need 4 spaces till 25\" }}",
+		},
+	})
+	AddFunc(&Func{
+		Func: Exists,
+		Doc: FuncDoc{
+			Name:    "exists",
+			Text:    "Returns true if field exists in map, else false",
+			Example: "{{ exists . \"my_field\" }}",
+		},
+	})
 }
 
 func Indent(identSize int, a string) string {

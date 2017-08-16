@@ -34,10 +34,52 @@
 package chew
 
 import (
+	"time"
+
 	_ "bitbucket.org/lovromazgon/chew-plsql"
+	"bitbucket.org/lovromazgon/chew/funcmap"
 )
 
 var (
 	Version     string
 	VersionDate string
 )
+
+func init() {
+	funcmap.AddFunc(&funcmap.Func{
+		Func: func() map[string]interface{} {
+			return map[string]interface{}{
+				"version":        Version,
+				"version_date":   VersionDate,
+				"execution_date": time.Now().Format("02.01.2006"),
+				"execution_time": time.Now().Format("15:04"),
+			}
+		},
+		Doc: funcmap.FuncDoc{
+			Name:    "chew",
+			Text:    "Makes some general information about Chew available in templates",
+			NestedFuncs: []funcmap.FuncDoc {
+				{
+					Name: "version",
+					Text: "Returns the current version of Chew",
+					Example: "{{ chew.version }}",
+				},
+				{
+					Name: "version_date",
+					Text: "Returns the date of the release of Chew",
+					Example: "{{ chew.version_date }}",
+				},
+				{
+					Name: "execution_date",
+					Text: "Returns the date of execution (today)",
+					Example: "{{ chew.execution_date }}",
+				},
+				{
+					Name: "execution_time",
+					Text: "Returns the time of execution (now)",
+					Example: "{{ chew.execution_time }}",
+				},
+			},
+		},
+	})
+}
