@@ -1,40 +1,42 @@
-package funcmap
+package chew
 
 import (
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"bitbucket.org/lovromazgon/chew/funcmap"
 )
 
 func init() {
-	AddFunc(&Func{
+	funcmap.AddFunc(&funcmap.Func{
 		Func: Indent,
-		Doc: FuncDoc{
+		Doc: funcmap.FuncDoc{
 			Name:    "indent",
 			Text:    "With indent you can prepend spaces to a multi-line string.",
 			Example: "{{ indent 2 \"my beautiful\\n multiline string\" }}",
 		},
 	})
-	AddFunc(&Func{
+	funcmap.AddFunc(&funcmap.Func{
 		Func: MaxLength,
-		Doc: FuncDoc{
+		Doc: funcmap.FuncDoc{
 			Name:    "maxLength",
 			Text:    "Returns the length of the longest field in a string slice",
 			Example: "{{ maxLength .myStringSlice }}",
 		},
 	})
-	AddFunc(&Func{
+	funcmap.AddFunc(&funcmap.Func{
 		Func: Offset,
-		Doc: FuncDoc{
+		Doc: funcmap.FuncDoc{
 			Name:    "offset",
 			Text:    "Returns the offset in blank spaces so that the input string reaches the input length",
 			Example: "{{ offset 25 \"Need 4 spaces till 25\" }}",
 		},
 	})
-	AddFunc(&Func{
+	funcmap.AddFunc(&funcmap.Func{
 		Func: Exists,
-		Doc: FuncDoc{
+		Doc: funcmap.FuncDoc{
 			Name:    "exists",
 			Text:    "Returns true if field exists in map, else false",
 			Example: "{{ exists . \"my_field\" }}",

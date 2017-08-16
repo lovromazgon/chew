@@ -1,4 +1,4 @@
-package funcmap
+package chew
 
 import (
 	"testing"
@@ -97,7 +97,7 @@ func TestMaxLength_Panic(t *testing.T) {
 	}{
 		{nil},
 		{[]interface{}{}},
-		{ 1},
+		{1},
 		{"test"},
 	}
 
@@ -110,12 +110,12 @@ func TestMaxLength_Panic(t *testing.T) {
 
 func TestExists_Expected(t *testing.T) {
 	testCases := []struct {
-		Map map[string]interface{}
-		Key string
+		Map      map[string]interface{}
+		Key      string
 		Expected bool
 	}{
-		{map[string]interface{}{"a":"b"}, "a", true},
-		{map[string]interface{}{"a":"b"}, "b", false},
+		{map[string]interface{}{"a": "b"}, "a", true},
+		{map[string]interface{}{"a": "b"}, "b", false},
 		{map[string]interface{}{}, "a", false},
 		{nil, "a", false},
 	}

@@ -135,7 +135,7 @@ func (ct *Template) IndentTemplate(template string, data interface{}, parent int
 		panic(err)
 	}
 
-	return funcmap.Indent(indentSize, buffer.String())
+	return Indent(indentSize, buffer.String())
 }
 
 func (ct *Template) IndentTemplates(nestedTemplates interface{}, templateField string, parent interface{}, indentSize int) string {
