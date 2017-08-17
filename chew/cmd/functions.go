@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"bitbucket.org/lovromazgon/chew"
-	"bitbucket.org/lovromazgon/chew/funcmap"
+	"github.com/lovromazgon/chew"
+	"github.com/lovromazgon/chew/funcmap"
 	"github.com/spf13/cobra"
 	"os"
 	"regexp"

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"bitbucket.org/lovromazgon/chew"
+	"github.com/lovromazgon/chew"
 	"github.com/spf13/cobra"
 )
 

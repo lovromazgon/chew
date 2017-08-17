@@ -22,7 +22,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"bitbucket.org/lovromazgon/chew"
+	"github.com/lovromazgon/chew"
 	"github.com/spf13/cobra"
 )
 
