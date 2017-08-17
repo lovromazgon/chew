@@ -9,7 +9,7 @@ import (
 	"sync"
 	"text/template"
 
-	"bitbucket.org/lovromazgon/chew/funcmap"
+	"github.com/lovromazgon/chew/funcmap"
 )
 
 var (

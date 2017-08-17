@@ -14,7 +14,7 @@
 
 package main
 
-import "bitbucket.org/lovromazgon/chew/chew/cmd"
+import "github.com/lovromazgon/chew/chew/cmd"
 
 func main() {
 	cmd.Execute()

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"bitbucket.org/lovromazgon/chew/funcmap"
+	"github.com/lovromazgon/chew/funcmap"
 )
 
 func init() {

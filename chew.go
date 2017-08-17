@@ -38,8 +38,8 @@ package chew
 import (
 	"time"
 
-	_ "bitbucket.org/lovromazgon/chew-plsql" // imports plsql specific functions
-	"bitbucket.org/lovromazgon/chew/funcmap"
+	_ "github.com/lovromazgon/chew-plsql" // imports plsql specific functions
+	"github.com/lovromazgon/chew/funcmap"
 )
 
 var (
