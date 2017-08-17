@@ -6,8 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"log"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func ExampleTemplate_ExecuteChewable() {

@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	Global Functions
-	initOnce  sync.Once
+	Global   Functions
+	initOnce sync.Once
 )
 
 func initFunctions() {

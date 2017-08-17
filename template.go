@@ -59,7 +59,7 @@ func (ct *Template) InjectFunctions() {
 				Name: "indentTemplates",
 				Text: "Use indentTemplate to execute multiple child templates and indent the content with spaces." +
 					"This function takes 4 parameters:\n" +
-					"- nestedTemplates []interface{} : the array whic contains the nested templates\n" +
+					"- nestedTemplates []interface{} : the slice of nested templates\n" +
 					"- templateField string          : the name of the field which contains the name of the template to be used\n" +
 					"- parent interface{}            : the parent who calls the nested template (will be available in the nested template in field .parent)\n" +
 					"- indentSize int                : number of spaces to indent this template",

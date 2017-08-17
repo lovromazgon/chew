@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"os"
+	"regexp"
+
 	"github.com/lovromazgon/chew"
 	"github.com/lovromazgon/chew/funcmap"
 	"github.com/spf13/cobra"
-	"os"
-	"regexp"
 )
 
 func init() {
@@ -49,7 +50,7 @@ func functionsToChewable(functions funcmap.Functions, filter *regexp.Regexp) *ch
 		Data: make([]chew.ChewableData, len(functions)),
 	}
 
-	for i,fun := range functions {
+	for i, fun := range functions {
 		if filter != nil && !filter.Match([]byte(fun.Doc.Name)) {
 			continue
 		}
@@ -60,8 +61,8 @@ func functionsToChewable(functions funcmap.Functions, filter *regexp.Regexp) *ch
 		}
 
 		data := chew.ChewableData{
-			Templates: map[string]string {
-				fun.Doc.Template():fun.Doc.Name + ".out",
+			Templates: map[string]string{
+				fun.Doc.Template(): fun.Doc.Name + ".out",
 			},
 			Local: localData,
 		}

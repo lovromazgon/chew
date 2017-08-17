@@ -44,7 +44,7 @@ import (
 
 var (
 	// Version of Chew
-	Version     string
+	Version string
 	// ReleaseDate of Chew
 	ReleaseDate string
 )
@@ -53,34 +53,34 @@ func init() {
 	funcmap.AddFunc(&funcmap.Func{
 		Func: func() map[string]interface{} {
 			return map[string]interface{}{
-				"version":        Version,
-				"release_date":   ReleaseDate,
-				"now_date": time.Now().Format("02.01.2006"),
-				"now_time": time.Now().Format("15:04"),
+				"version":      Version,
+				"release_date": ReleaseDate,
+				"now_date":     time.Now().Format("02.01.2006"),
+				"now_time":     time.Now().Format("15:04"),
 			}
 		},
 		Doc: funcmap.FuncDoc{
-			Name:    "chew",
-			Text:    "Makes some general information about Chew available in templates",
-			NestedFuncs: []funcmap.FuncDoc {
+			Name: "chew",
+			Text: "Makes some general information about Chew available in templates",
+			NestedFuncs: []funcmap.FuncDoc{
 				{
-					Name: "version",
-					Text: "Returns the current version of Chew",
+					Name:    "version",
+					Text:    "Returns the current version of Chew",
 					Example: "{{ chew.version }}",
 				},
 				{
-					Name: "release_date",
-					Text: "Returns the date of the release of Chew",
+					Name:    "release_date",
+					Text:    "Returns the date of the release of Chew",
 					Example: "{{ chew.version_date }}",
 				},
 				{
-					Name: "now_date",
-					Text: "Returns the date of execution (today)",
+					Name:    "now_date",
+					Text:    "Returns the date of execution (today)",
 					Example: "{{ chew.execution_date }}",
 				},
 				{
-					Name: "now_time",
-					Text: "Returns the time of execution (now)",
+					Name:    "now_time",
+					Text:    "Returns the time of execution (now)",
 					Example: "{{ chew.execution_time }}",
 				},
 			},

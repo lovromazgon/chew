@@ -17,15 +17,14 @@ type Writer interface {
 	SetOut(filename string)
 }
 
-
 // WriterWrapper is a convenience object to allow wrapping an io.Writer and implement the Writer interface.
 // The SetOut method is empty and does nothing.
 type WriterWrapper struct {
 	io.Writer
 }
+
 // SetOut is empty and does nothing.
 func (WriterWrapper) SetOut(filename string) {}
-
 
 // MultiFileWriter is a Writer which writes everything to files in the folder Out. If the folder defined in Out
 // doesn't exist it is created before writing to the first file. SetOut has to be called before starting to
@@ -42,7 +41,7 @@ type MultiFileWriter struct {
 func (w *MultiFileWriter) SetOut(filename string) {
 	w.Once.Do(func() {
 		// check if out folder exists and create it
-		if _,err := os.Stat(w.Out); err != nil {
+		if _, err := os.Stat(w.Out); err != nil {
 			if err := os.MkdirAll(w.Out, os.ModePerm); err != nil {
 				panic(err)
 			}
